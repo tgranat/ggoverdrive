@@ -21,9 +21,10 @@ GgOverdriveProcessor::GgOverdriveProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), mAPVTS(*this, nullptr, "PARAMETERS", createParameters())
 #endif
 {
+    mAPVTS.state.addListener(this);
 }
 
 GgOverdriveProcessor::~GgOverdriveProcessor()
@@ -158,6 +159,52 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     }
 }
 
+AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {
+    std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
+
+    const float maxGain = Decibels::decibelsToGain(12.f);
+
+    parameters.push_back(std::make_unique<AudioParameterFloat>("FREQUENCY", "eq",
+        NormalisableRange<float> {200.f,
+        900.f,
+        1.0f, std::log(0.5f) / std::log((350.f - 200.f) / (900.f - 200.f))},
+        350.f,
+        String(),
+        AudioProcessorParameter::genericParameter,
+        [](float value, int) { return (value < 1000) ? String(value, 0) + " Hz" : String(value / 1000.0, 2) + " kHz"; },
+        [](String text) { return text.endsWith(" kHz") ? text.dropLastCharacters(4).getFloatValue() * 1000.0 : text.dropLastCharacters(3).getFloatValue(); }));
+
+    parameters.push_back(std::make_unique<AudioParameterFloat>("DIST", "distortion",
+        NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
+        std::log(0.5f) / std::log((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
+        1.f,
+        String(),
+        AudioProcessorParameter::genericParameter,
+        [](float value, int) {return String(Decibels::gainToDecibels(value), 1) + " dB"; },
+        [](String text) {return Decibels::decibelsToGain(text.dropLastCharacters(3).getFloatValue()); }));
+
+    parameters.push_back(std::make_unique<AudioParameterFloat>("LEVEL", "gain",
+        NormalisableRange<float> {1.0f / maxGain, maxGain, 0.001f,
+        std::log(0.5f) / std::log((1.0f - (1.0f / maxGain)) / (maxGain - (1.0f / maxGain)))},
+        1.f,
+        String(),
+        AudioProcessorParameter::genericParameter,
+        [](float value, int) {return String(Decibels::gainToDecibels(value), 1) + " dB"; },
+        [](String text) {return Decibels::decibelsToGain(text.dropLastCharacters(3).getFloatValue()); }));
+
+    return { parameters.begin(), parameters.end() };
+}
+
+void GgOverdriveProcessor::updateParams() {
+    mLevel = mAPVTS.getRawParameterValue("LEVEL")->load();
+    mDistortion = mAPVTS.getRawParameterValue("DIST")->load();
+    mFrequency = mAPVTS.getRawParameterValue("FREQUENCY")->load();
+}
+
+void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {
+    mParamsHaveBeenUpdatedInGUI = true;
+}
+
 //==============================================================================
 bool GgOverdriveProcessor::hasEditor() const
 {
@@ -175,12 +222,23 @@ void GgOverdriveProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+        // Run updateParams() to make sure latest GUI params have been fecthed (in case of "Reset to factory")
+    updateParams();
+    auto state = getAPVTS().copyState();
+    std::unique_ptr<XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
+
 }
 
 void GgOverdriveProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName(getAPVTS().state.getType()))
+            getAPVTS().replaceState(ValueTree::fromXml(*xmlState));
+
 }
 
 //==============================================================================

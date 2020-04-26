@@ -15,28 +15,56 @@
 GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+
     setSize (400, 300);
+
+    levelSlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    levelSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    levelSlider.setPopupDisplayEnabled(true, false, this);
+    //levelSlider.setLookAndFeel(&basicLookAndFeel);
+    addAndMakeVisible(levelSlider);
+    mLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "LEVEL", levelSlider);
+
+    distSlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    distSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    distSlider.setPopupDisplayEnabled(true, false, this);
+    //distSlider.setLookAndFeel(&basicLookAndFeel);
+    addAndMakeVisible(distSlider);
+    mDistAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "DIST", distSlider);
+
+    frequencySlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    frequencySlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    frequencySlider.setPopupDisplayEnabled(true, false, this);
+    //frequencySlider.setLookAndFeel(&basicLookAndFeel);
+    addAndMakeVisible(frequencySlider);
+    mFrequencyAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "FREQUENCY", frequencySlider);
+
+
 }
 
 GgOverdriveEditor::~GgOverdriveEditor()
 {
+ 
 }
 
 //==============================================================================
 void GgOverdriveEditor::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    g.setColour (Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
+    g.setColour(Colours::white);
+    g.setFont(Font("Ariel", 15.0f, Font::bold));
+    g.drawFittedText("Prototype Filter Overdrive", 0, 0, getWidth(), 30, Justification::centred, 1);
 }
 
 void GgOverdriveEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    int sliderLeft = 10;
+    int sliderRow = 25;
+    int w = 50;
+    int h = 50;
+
+    frequencySlider.setBounds(sliderLeft, sliderRow, w, h);
+    distSlider.setBounds(sliderLeft + 80, sliderRow, w, h);
+    levelSlider.setBounds(sliderLeft + 160, sliderRow, w, h);
+
 }
+

@@ -31,5 +31,14 @@ private:
     // access the processor object that created it.
     GgOverdriveProcessor& processor;
 
+    Slider levelSlider;
+    Slider distSlider;
+    Slider frequencySlider;
+
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mLevelAttachement;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mDistAttachement;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mFrequencyAttachement;
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GgOverdriveEditor)
 };
