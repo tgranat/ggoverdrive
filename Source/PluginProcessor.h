@@ -62,18 +62,22 @@ public:
     float mDistortion;
     float mLevel;
 
-
 private:
     enum
     {
-        frequencyIndex,
+        bandPassIndex,
+        highPassIndex,
         levelIndex
     };
 
     // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
     using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
+    using HighPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using Gain = dsp::Gain<float>;
-    juce::dsp::ProcessorChain < BandPassFilter, Gain> processorChain;
+    juce::dsp::ProcessorChain < BandPassFilter,       // The variable band pass filter
+                                HighPassFilter,       // High pass filter before distorion stage
+                                Gain>                 // Output level
+                                processorChain;
 
     AudioProcessorValueTreeState mAPVTS;
     AudioProcessorValueTreeState::ParameterLayout createParameters();
@@ -86,7 +90,6 @@ private:
     float mFilterQ;
     float mCurrentDistortion;
     float mSampleRate = 0;
-    //float mCurrentLevel;
 
     std::atomic<bool> mParamsHaveBeenUpdatedInGUI{ false };
 

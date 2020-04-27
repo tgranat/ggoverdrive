@@ -107,9 +107,15 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 
     mCurrentFilterFrequency = mFrequency;
     mCurrentDistortion = mDistortion;
-    //mCurrentLevel = mLevel;
 
-    setFrequencyFilterData(true);
+    bool setFilterDataFirstTime = true;
+    setFrequencyFilterData(setFilterDataFirstTime);
+
+    // Static high pass filter before distortion stage. 6 dB/octave
+    auto& highPassFilter = processorChain.get<highPassIndex>().state;
+    dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeHighPass(mSampleRate, 300.f);
+    *highPassFilter = *newCoefficients;
+
     setOutputLevelData();
 }
 
@@ -154,7 +160,7 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    if (mParamsHaveBeenUpdatedInGUI) {  // varför gör jag inte det här i valueTreePropertyChanged??
+    if (mParamsHaveBeenUpdatedInGUI) {
         updateParams();
         setFrequencyFilterData();
         setOutputLevelData();
@@ -206,14 +212,13 @@ void GgOverdriveProcessor::updateParams() {
     mLevel = mAPVTS.getRawParameterValue("LEVEL")->load();
     mDistortion = mAPVTS.getRawParameterValue("DIST")->load();
     mFrequency = mAPVTS.getRawParameterValue("FREQUENCY")->load();
-    
 }
 
 void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
     if (firstTime || mCurrentFilterFrequency != mFrequency) {
-        mFilterQ = 4;  // Fix this to be a function of the frequency. Logartithmic or so. 4 (200 Hz) - 14 (800 Hz)
+        mFilterQ = 4;  // Fix this to be a function of the frequency, since it changes. Logartithmic or so. 4 (200 Hz) - 14 (800 Hz)
         // .state has to do with that the filter is duplicated
-        auto& frequencyFilter = processorChain.get<frequencyIndex>().state;
+        auto& frequencyFilter = processorChain.get<bandPassIndex>().state;
         dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
         *frequencyFilter = *newCoefficients;
         mCurrentFilterFrequency = mFrequency;
@@ -227,7 +232,7 @@ void GgOverdriveProcessor::setOutputLevelData() {
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {
     mParamsHaveBeenUpdatedInGUI = true;
-}
+ }
 
 //==============================================================================
 bool GgOverdriveProcessor::hasEditor() const
