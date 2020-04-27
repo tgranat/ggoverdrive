@@ -79,11 +79,14 @@ private:
     AudioProcessorValueTreeState::ParameterLayout createParameters();
     void valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) override;
     void updateParams();
+    void setFrequencyFilterData(bool firstTime = false);
+    void setOutputLevelData();
 
     float mCurrentFilterFrequency;
     float mFilterQ;
     float mCurrentDistortion;
-    float mCurrentLevel;
+    float mSampleRate = 0;
+    //float mCurrentLevel;
 
     std::atomic<bool> mParamsHaveBeenUpdatedInGUI{ false };
 

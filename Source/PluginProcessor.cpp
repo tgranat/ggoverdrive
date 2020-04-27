@@ -96,21 +96,21 @@ void GgOverdriveProcessor::changeProgramName (int index, const String& newName)
 //==============================================================================
 void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    mSampleRate = sampleRate;
+    updateParams();
+
     dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = uint32(samplesPerBlock);
     spec.numChannels = uint32(getTotalNumOutputChannels());
     processorChain.prepare(spec);
 
-    // .state has to do with that the filter is duplicated
-    auto& frequencyFilter = processorChain.get<frequencyIndex>().state;
-    dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(sampleRate, mFrequency, mFilterQ);
-    //*frequencyFilter = *newCoefficients;
-    //*filter.get<0>  ().state = *loCoeff;
-    *frequencyFilter = *newCoefficients;
+    mCurrentFilterFrequency = mFrequency;
+    mCurrentDistortion = mDistortion;
+    //mCurrentLevel = mLevel;
 
-    auto& level = processorChain.get<levelIndex>();
-    level.setGainLinear(mLevel);
+    setFrequencyFilterData(true);
+    setOutputLevelData();
 }
 
 void GgOverdriveProcessor::releaseResources()
@@ -150,11 +150,20 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    // Clear output channels if there are more than input channels 
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
+
+    if (mParamsHaveBeenUpdatedInGUI) {  // varför gör jag inte det här i valueTreePropertyChanged??
+        updateParams();
+        setFrequencyFilterData();
+        setOutputLevelData();
+        mParamsHaveBeenUpdatedInGUI = false;
+    }
+
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
     processorChain.process(context);
-
-
 }
 
 AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {
@@ -197,7 +206,23 @@ void GgOverdriveProcessor::updateParams() {
     mLevel = mAPVTS.getRawParameterValue("LEVEL")->load();
     mDistortion = mAPVTS.getRawParameterValue("DIST")->load();
     mFrequency = mAPVTS.getRawParameterValue("FREQUENCY")->load();
-    mFilterQ = 4;  // Fix this to be a function of the frequency. Logartithmic or so. 4 (200 Hz) - 14 (800 Hz=
+    
+}
+
+void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
+    if (firstTime || mCurrentFilterFrequency != mFrequency) {
+        mFilterQ = 4;  // Fix this to be a function of the frequency. Logartithmic or so. 4 (200 Hz) - 14 (800 Hz)
+        // .state has to do with that the filter is duplicated
+        auto& frequencyFilter = processorChain.get<frequencyIndex>().state;
+        dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
+        *frequencyFilter = *newCoefficients;
+        mCurrentFilterFrequency = mFrequency;
+    }
+}
+
+void GgOverdriveProcessor::setOutputLevelData() {
+    auto& level = processorChain.get<levelIndex>();
+    level.setGainLinear(mLevel);
 }
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {
