@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="TL4Mwy" name="ggoverdrive" projectType="audioplug" jucerVersion="5.4.7">
+<JUCERPROJECT id="TL4Mwy" name="ggoverdrive" projectType="audioplug" jucerVersion="5.4.7"
+              pluginManufacturer="GranatGuitar" pluginName="Systech Overdrive Emulator">
   <MAINGROUP id="tCm7pT" name="ggoverdrive">
     <GROUP id="{94856CB1-01D6-ADF9-72B7-3C869B66BBEC}" name="Source">
       <FILE id="TkUZ6p" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -33,6 +34,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../juce-5.4.7-windows/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../juce-5.4.7-windows/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../juce-5.4.7-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../juce-5.4.7-windows/JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
@@ -47,6 +49,7 @@
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

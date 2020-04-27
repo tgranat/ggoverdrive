@@ -57,19 +57,31 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     AudioProcessorValueTreeState& getAPVTS() { return mAPVTS; }
-
+ 
     float mFrequency;
     float mDistortion;
     float mLevel;
 
 
 private:
+    enum
+    {
+        frequencyIndex,
+        levelIndex
+    };
+
+    // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
+    using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
+    using Gain = dsp::Gain<float>;
+    juce::dsp::ProcessorChain < BandPassFilter, Gain> processorChain;
+
     AudioProcessorValueTreeState mAPVTS;
     AudioProcessorValueTreeState::ParameterLayout createParameters();
     void valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) override;
     void updateParams();
 
     float mCurrentFilterFrequency;
+    float mFilterQ;
     float mCurrentDistortion;
     float mCurrentLevel;
 
