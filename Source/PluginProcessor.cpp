@@ -111,9 +111,12 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     bool setFilterDataFirstTime = true;
     setFrequencyFilterData(setFilterDataFirstTime);
 
-    // Static high pass filter before distortion stage. 6 dB/octave
+    // Static high pass filter before distortion stage. Cut-off frequency 312 Hz.  6 dB/octave.
+    // Using dsp::FilterDesign to make sure it's first order.
+    // I think dsp::IIR::Coefficients<float>::makeBandPass makes a second-order filter (12 dB/octave)
     auto& highPassFilter = processorChain.get<highPassIndex>().state;
-    dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeHighPass(mSampleRate, 300.f);
+    auto coeffs = dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(312.f, mSampleRate, 1);
+    dsp::IIR::Coefficients<float>::Ptr newCoefficients = coeffs[0];
     *highPassFilter = *newCoefficients;
 
     setOutputLevelData();
