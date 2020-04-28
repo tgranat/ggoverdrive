@@ -216,7 +216,8 @@ void GgOverdriveProcessor::updateParams() {
 
 void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
     if (firstTime || mCurrentFilterFrequency != mFrequency) {
-        mFilterQ = 4;  // Fix this to be a function of the frequency, since it changes. Logartithmic or so. 4 (200 Hz) - 14 (800 Hz)
+        //mFilterQ = 4;  
+        mFilterQ = mFrequency / 50;  // Q function of frequency and bandwidth
         // .state has to do with that the filter is duplicated
         auto& frequencyFilter = processorChain.get<bandPassIndex>().state;
         dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
