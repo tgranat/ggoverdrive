@@ -178,11 +178,11 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
 AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {
     std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-    const float maxGain = Decibels::decibelsToGain(12.f);
+    const float maxGain = Decibels::decibelsToGain(18.f);
 
     parameters.push_back(std::make_unique<AudioParameterFloat>("FREQUENCY", "eq",
         NormalisableRange<float> {200.f,
-        900.f,
+        1000.f,
         1.0f, std::log(0.5f) / std::log((350.f - 200.f) / (900.f - 200.f))},
         350.f,
         String(),
@@ -231,7 +231,7 @@ void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
 
 void GgOverdriveProcessor::setOutputLevelData() {
     auto& level = processorChain.get<levelIndex>();
-    level.setGainLinear(mLevel);
+    level.setGainLinear(mLevel * 4.f );
 }
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {

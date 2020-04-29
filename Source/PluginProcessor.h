@@ -76,7 +76,13 @@ private:
     using Gain = dsp::Gain<float>;
     juce::dsp::ProcessorChain < BandPassFilter,       // The variable band pass filter
                                 HighPassFilter,       // High pass filter before distorion stage
-                                Gain>                 // Output level
+                                // gain stage (opamp)
+                                // wave shaper opamp clipping
+                                // maybe LP filter here simulating low opamp bandwidth?
+                                // wave shaper diode clipping
+                                // HP 22 Hz here (maybe)
+                                // Maybe some bias and slight clipping on last transistor gain stage
+                                Gain>                 // Main plugin Output level
                                 processorChain;
 
     AudioProcessorValueTreeState mAPVTS;
@@ -96,3 +102,5 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GgOverdriveProcessor)
 };
+
+
