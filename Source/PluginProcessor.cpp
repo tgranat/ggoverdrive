@@ -173,6 +173,9 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
     processorChain.process(context);
+
+    // Scope stuff
+    scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
 }
 
 AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {

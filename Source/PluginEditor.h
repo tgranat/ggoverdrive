@@ -39,6 +39,8 @@ private:
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mDistAttachement;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mFrequencyAttachement;
 
+    // Scope stuff
+    ScopeComponent<float> scopeComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GgOverdriveEditor)
 };

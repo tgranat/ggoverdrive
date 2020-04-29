@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Scope.h"
 
 //==============================================================================
 /**
@@ -62,6 +63,9 @@ public:
     float mDistortion;
     float mLevel;
 
+    // Scope stuff
+    AudioBufferQueue<float>& getAudioBufferQueue() noexcept { return audioBufferQueue; }
+
 private:
     enum
     {
@@ -98,6 +102,10 @@ private:
     float mSampleRate = 0;
 
     std::atomic<bool> mParamsHaveBeenUpdatedInGUI{ false };
+
+    // Scope stuff
+    AudioBufferQueue<float> audioBufferQueue;
+    ScopeDataCollector<float> scopeDataCollector{ audioBufferQueue };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GgOverdriveProcessor)

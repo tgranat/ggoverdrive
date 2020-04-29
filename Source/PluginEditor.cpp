@@ -13,7 +13,7 @@
 
 //==============================================================================
 GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+    : AudioProcessorEditor (&p), processor (p), scopeComponent(processor.getAudioBufferQueue())
 {
 
     setSize (400, 300);
@@ -39,7 +39,11 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     addAndMakeVisible(frequencySlider);
     mFrequencyAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "FREQUENCY", frequencySlider);
 
-
+    // Scope stuff
+    addAndMakeVisible(scopeComponent);
+    auto area = getLocalBounds();
+    scopeComponent.setTopLeftPosition(0, 80);
+    scopeComponent.setSize(area.getWidth(), area.getHeight() - 100);
 }
 
 GgOverdriveEditor::~GgOverdriveEditor()

@@ -11,6 +11,7 @@
       <FILE id="IAegxl" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="nbXCfw" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="Pcm9Mr" name="Scope.h" compile="0" resource="0" file="Source/Scope.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
