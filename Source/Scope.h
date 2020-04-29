@@ -5,6 +5,9 @@
     Created: 29 Apr 2020 7:35:50pm
     Author:  tobbe
 
+    Mostly copied from oscilloscope and spectrum implementation in JUCE DSPIntroductionTutorial
+    https://docs.juce.com/master/tutorial_dsp_introduction.html
+
   ==============================================================================
 */
 
@@ -151,13 +154,15 @@ public:
         auto w = (SampleType)area.getWidth();
 
         // Oscilloscope
-        auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h / 2 };
-        plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h / 4);
+        auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h  };
+        plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h /2);
+        //auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h / 2 };
+        //plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h / 4);
 
         // Spectrum
-        auto spectrumRect = Rectangle<SampleType>{ SampleType(0), h / 2, w, h / 2 };
-        plot(spectrumData.data(), spectrumData.size() / 4, g, spectrumRect);
-    }
+        //auto spectrumRect = Rectangle<SampleType>{ SampleType(0), h / 2, w, h / 2 };
+        //plot(spectrumData.data(), spectrumData.size() / 4, g, spectrumRect);
+     }
 
     //==============================================================================
     void resized() override {}
