@@ -29,7 +29,7 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     mLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "LEVEL", levelSlider);
 
     levelLabel.setFont(controlFont);
-    levelLabel.setText("Level Out", dontSendNotification);
+    levelLabel.setText("level out", dontSendNotification);
     levelLabel.setJustificationType(Justification::centredBottom);
     levelLabel.attachToComponent(&levelSlider, false);
     addAndMakeVisible(levelLabel);
@@ -40,10 +40,10 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     inputLevelSlider.setPopupDisplayEnabled(true, false, this);
     //inputLevelSlider.setLookAndFeel(&basicLookAndFeel);
     addAndMakeVisible(inputLevelSlider);
-    mLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "INPUT LEVEL", inputLevelSlider);
+    mInputLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "INPUTLEVEL", inputLevelSlider);
 
     inputLevelLabel.setFont(controlFont);
-    inputLevelLabel.setText("Level In", dontSendNotification);
+    inputLevelLabel.setText("level in", dontSendNotification);
     inputLevelLabel.setJustificationType(Justification::centredBottom);
     inputLevelLabel.attachToComponent(&inputLevelSlider, false);
     addAndMakeVisible(inputLevelLabel);
@@ -57,7 +57,7 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     mDistAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "DIST", distSlider);
 
     distLabel.setFont(controlFont);
-    distLabel.setText("Dist", dontSendNotification);
+    distLabel.setText("distortion", dontSendNotification);
     distLabel.setJustificationType(Justification::centredBottom);
     distLabel.attachToComponent(&distSlider, false);
     addAndMakeVisible(distLabel);
@@ -72,7 +72,7 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     mFrequencyAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "FREQUENCY", frequencySlider);
 
     frequencyLabel.setFont(controlFont);
-    frequencyLabel.setText("Frequency", dontSendNotification);
+    frequencyLabel.setText("eq", dontSendNotification);
     frequencyLabel.setJustificationType(Justification::centredBottom);
     frequencyLabel.attachToComponent(&frequencySlider, false);
     addAndMakeVisible(frequencyLabel);

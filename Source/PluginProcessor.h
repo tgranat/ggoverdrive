@@ -73,22 +73,25 @@ private:
         inputLevelIndex,
         bandPassIndex,
         highPassIndex,
+        opampGainIndex,
+        opampClippingIndex,
         levelIndex
     };
 
     // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
     using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using HighPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
+    using WaveShaper = dsp::WaveShaper<float>;
+
     using Gain = dsp::Gain<float>;
-    juce::dsp::ProcessorChain < Gain,                 // Inpult level
+    juce::dsp::ProcessorChain < Gain,                 // Input level
                                 BandPassFilter,       // The variable band pass filter
                                 HighPassFilter,       // High pass filter before distorion stage
-                                // gain stage (opamp)
-                                // wave shaper opamp clipping
-                                // maybe LP filter here simulating low opamp bandwidth?
-                                // wave shaper diode clipping
-                                // HP 22 Hz here (maybe)
-                                // Maybe some bias and slight clipping on last transistor gain stage
+                                 // change bias to get some asych clipping
+                                Gain,                 // Opamp gain
+                                WaveShaper,           // Opamp clipping stage (hard square wave clipping)
+                                // Static gain stage to get diode clipping before opamp clipping
+                                 // WaveShaper diode soft clipping stage(output from opamp clipping must be high, extra gain stage? Diodes should clip before opamp does)
                                 Gain>                 // Main plugin Output level
                                 processorChain;
 

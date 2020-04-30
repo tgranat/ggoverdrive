@@ -122,6 +122,14 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     dsp::IIR::Coefficients<float>::Ptr newCoefficients = coeffs[0];
     *highPassFilter = *newCoefficients;
 
+    // Waveshaper for opamp clipping
+    auto& waveshaper = processorChain.template get<opampClippingIndex>();
+    waveshaper.functionToUse = [](float x)
+    {
+        return jlimit(float(-0.1), float(0.1), x); 
+        //return std::tanh(x);
+    };
+
     setLevelData();
 }
 
@@ -176,9 +184,9 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     //float preRMSLevel = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
     //float preMaxLevel = buffer.getMagnitude(0, 0, buffer.getNumSamples());
   
-    //processorChain.setBypassed<bandPassIndex> (true);   // temp disable BP filter
-
-    // NEED A PREGAIN CONTROL
+    processorChain.setBypassed<bandPassIndex> (true);   // temp disable BP filter
+    //processorChain.setBypassed<opampClippingIndex>(true); 
+    //processorChain.setBypassed<opampGainIndex>(true);
 
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
@@ -196,10 +204,11 @@ AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParame
 
     const float maxInGain = Decibels::decibelsToGain(18.f);
     const float maxOutGain = Decibels::decibelsToGain(18.f);
+    const float maxDist = Decibels::decibelsToGain(18.f);
 
-    parameters.push_back(std::make_unique<AudioParameterFloat>("INPUT LEVEL", "pregain",
-        NormalisableRange<float> {1.0f / maxOutGain, maxOutGain, 0.001f,
-        std::log(0.5f) / std::log((1.0f - (1.0f / maxOutGain)) / (maxOutGain - (1.0f / maxOutGain)))},
+    parameters.push_back(std::make_unique<AudioParameterFloat>("INPUTLEVEL", "pregain",
+        NormalisableRange<float> {1.0f / maxInGain, maxInGain, 0.001f,
+        std::log(0.5f) / std::log((1.0f - (1.0f / maxInGain)) / (maxInGain - (1.0f / maxInGain)))},
         1.f,
         String(),
         AudioProcessorParameter::genericParameter,
@@ -217,8 +226,8 @@ AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParame
         [](String text) { return text.endsWith(" kHz") ? text.dropLastCharacters(4).getFloatValue() * 1000.0 : text.dropLastCharacters(3).getFloatValue(); }));
 
     parameters.push_back(std::make_unique<AudioParameterFloat>("DIST", "distortion",
-        NormalisableRange<float> {1.0f / maxOutGain, maxOutGain, 0.001f,
-        std::log(0.5f) / std::log((1.0f - (1.0f / maxOutGain)) / (maxOutGain - (1.0f / maxOutGain)))},
+        NormalisableRange<float> {1.0f / maxDist, maxDist, 0.001f,
+        std::log(0.5f) / std::log((1.0f - (1.0f / maxDist)) / (maxDist - (1.0f / maxDist)))},
         1.f,
         String(),
         AudioProcessorParameter::genericParameter,
@@ -239,7 +248,7 @@ AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParame
 
 void GgOverdriveProcessor::updateParams() {
     mLevel = mAPVTS.getRawParameterValue("LEVEL")->load();
-    mInputLevel = mAPVTS.getRawParameterValue("INPUT LEVEL")->load();
+    mInputLevel = mAPVTS.getRawParameterValue("INPUTLEVEL")->load();
     mDistortion = mAPVTS.getRawParameterValue("DIST")->load();
     mFrequency = mAPVTS.getRawParameterValue("FREQUENCY")->load();
 }
@@ -260,8 +269,11 @@ void GgOverdriveProcessor::setLevelData() {
     auto& inputLevel = processorChain.get<inputLevelIndex>();
     inputLevel.setGainLinear(mInputLevel);
 
+    auto& distLevel = processorChain.get<opampGainIndex>();
+    distLevel.setGainLinear(mDistortion);
+
     auto& level = processorChain.get<levelIndex>();
-    level.setGainLinear(mLevel * 4.f );
+    level.setGainLinear(mLevel );
 }
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {
