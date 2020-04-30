@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="TL4Mwy" name="ggoverdrive" projectType="audioplug" jucerVersion="5.4.7"
-              pluginManufacturer="GranatGuitar" pluginName="Systech Overdrive Emulator">
+              pluginManufacturer="GranatGuitar" pluginName="Systech Overdrive Simulator">
   <MAINGROUP id="tCm7pT" name="ggoverdrive">
     <GROUP id="{94856CB1-01D6-ADF9-72B7-3C869B66BBEC}" name="Source">
       <FILE id="TkUZ6p" name="PluginProcessor.cpp" compile="1" resource="0"
