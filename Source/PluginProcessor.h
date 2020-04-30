@@ -73,8 +73,11 @@ private:
         inputLevelIndex,
         bandPassIndex,
         highPassIndex,
+        biasIndex,
         opampGainIndex,
         opampClippingIndex,
+        afterOpampGainIndex,
+        diodeClippingIndex,
         levelIndex
     };
 
@@ -82,16 +85,17 @@ private:
     using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using HighPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using WaveShaper = dsp::WaveShaper<float>;
+    using Bias = dsp::Bias<float>;
 
     using Gain = dsp::Gain<float>;
     juce::dsp::ProcessorChain < Gain,                 // Input level
                                 BandPassFilter,       // The variable band pass filter
                                 HighPassFilter,       // High pass filter before distorion stage
-                                 // change bias to get some asych clipping
+                                Bias,                 // change bias to get some asych clipping 
                                 Gain,                 // Opamp gain
                                 WaveShaper,           // Opamp clipping stage (hard square wave clipping)
-                                // Static gain stage to get diode clipping before opamp clipping
-                                 // WaveShaper diode soft clipping stage(output from opamp clipping must be high, extra gain stage? Diodes should clip before opamp does)
+                                Gain,                 // Static gain stage to get diode clipping before opamp clipping
+                                WaveShaper,           // WaveShaper diode soft clipping stage
                                 Gain>                 // Main plugin Output level
                                 processorChain;
 
