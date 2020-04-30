@@ -132,7 +132,7 @@ public:
     ScopeComponent(Queue& queueToUse)
         : audioBufferQueue(queueToUse)
     {
-        sampleData.fill(SampleType(0));
+        sampleData.fill(SampleType(0));   // Fill with 0.f (if SampleType is float). Reminder for me
         setFramesPerSecond(30);
     }
 
@@ -154,8 +154,12 @@ public:
         auto w = (SampleType)area.getWidth();
 
         // Oscilloscope
+        // Scope rectangle size set to same as scope component set in editor
+        // (if also plotting spectrum, then set height to h/2)
         auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h  };
-        plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h /2);
+        // scaler = 0.5, offset = h/2
+        // (if also plotting spectrum, then set height to h/4)
+        plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(0.5), h /2); 
         //auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h / 2 };
         //plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h / 4);
 

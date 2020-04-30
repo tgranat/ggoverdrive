@@ -18,6 +18,9 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
 
     setSize (400, 300);
 
+    Font controlFont("Ariel", 13.0f, Font::plain);
+
+    // === Output level ===
     levelSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     levelSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
     levelSlider.setPopupDisplayEnabled(true, false, this);
@@ -25,6 +28,27 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     addAndMakeVisible(levelSlider);
     mLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "LEVEL", levelSlider);
 
+    levelLabel.setFont(controlFont);
+    levelLabel.setText("Level Out", dontSendNotification);
+    levelLabel.setJustificationType(Justification::centredBottom);
+    levelLabel.attachToComponent(&levelSlider, false);
+    addAndMakeVisible(levelLabel);
+
+    // == Input level ==
+    inputLevelSlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    inputLevelSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    inputLevelSlider.setPopupDisplayEnabled(true, false, this);
+    //inputLevelSlider.setLookAndFeel(&basicLookAndFeel);
+    addAndMakeVisible(inputLevelSlider);
+    mLevelAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "INPUT LEVEL", inputLevelSlider);
+
+    inputLevelLabel.setFont(controlFont);
+    inputLevelLabel.setText("Level In", dontSendNotification);
+    inputLevelLabel.setJustificationType(Justification::centredBottom);
+    inputLevelLabel.attachToComponent(&inputLevelSlider, false);
+    addAndMakeVisible(inputLevelLabel);
+
+    // === Dist ===
     distSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     distSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
     distSlider.setPopupDisplayEnabled(true, false, this);
@@ -32,18 +56,32 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     addAndMakeVisible(distSlider);
     mDistAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "DIST", distSlider);
 
+    distLabel.setFont(controlFont);
+    distLabel.setText("Dist", dontSendNotification);
+    distLabel.setJustificationType(Justification::centredBottom);
+    distLabel.attachToComponent(&distSlider, false);
+    addAndMakeVisible(distLabel);
+
+    // === Frequency ===
     frequencySlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    //frequencySlider.setTextBoxStyle(Slider::TextBoxBelow, true, 50, 20);
     frequencySlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
     frequencySlider.setPopupDisplayEnabled(true, false, this);
     //frequencySlider.setLookAndFeel(&basicLookAndFeel);
     addAndMakeVisible(frequencySlider);
     mFrequencyAttachement = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.getAPVTS(), "FREQUENCY", frequencySlider);
 
+    frequencyLabel.setFont(controlFont);
+    frequencyLabel.setText("Frequency", dontSendNotification);
+    frequencyLabel.setJustificationType(Justification::centredBottom);
+    frequencyLabel.attachToComponent(&frequencySlider, false);
+    addAndMakeVisible(frequencyLabel);
+
     // Scope stuff
     addAndMakeVisible(scopeComponent);
     auto area = getLocalBounds();
-    scopeComponent.setTopLeftPosition(0, 80);
-    scopeComponent.setSize(area.getWidth(), area.getHeight() - 100);
+    scopeComponent.setTopLeftPosition(0, 110);
+    scopeComponent.setSize(area.getWidth(), area.getHeight() - 130);
 }
 
 GgOverdriveEditor::~GgOverdriveEditor()
@@ -56,19 +94,20 @@ void GgOverdriveEditor::paint (Graphics& g)
 {
     g.setColour(Colours::white);
     g.setFont(Font("Ariel", 15.0f, Font::bold));
-    g.drawFittedText("Prototype Filter Overdrive", 0, 0, getWidth(), 30, Justification::centred, 1);
+    g.drawFittedText("Prototype Systech Overdrive Simulator", 0, 0, getWidth(), 30, Justification::centred, 1);
 }
 
 void GgOverdriveEditor::resized()
 {
     int sliderLeft = 10;
-    int sliderRow = 25;
+    int sliderRow = 45;
     int w = 50;
-    int h = 50;
+    int h = 60;
 
-    frequencySlider.setBounds(sliderLeft, sliderRow, w, h);
-    distSlider.setBounds(sliderLeft + 80, sliderRow, w, h);
-    levelSlider.setBounds(sliderLeft + 160, sliderRow, w, h);
+    inputLevelSlider.setBounds(sliderLeft, sliderRow, w, h);
+    frequencySlider.setBounds(sliderLeft + 70, sliderRow, w, h);
+    distSlider.setBounds(sliderLeft + 140, sliderRow, w, h);
+    levelSlider.setBounds(sliderLeft + 210, sliderRow, w, h);
 
 }
 

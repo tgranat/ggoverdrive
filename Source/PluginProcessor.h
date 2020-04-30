@@ -59,6 +59,7 @@ public:
 
     AudioProcessorValueTreeState& getAPVTS() { return mAPVTS; }
  
+    float mInputLevel;
     float mFrequency;
     float mDistortion;
     float mLevel;
@@ -69,6 +70,7 @@ public:
 private:
     enum
     {
+        inputLevelIndex,
         bandPassIndex,
         highPassIndex,
         levelIndex
@@ -78,7 +80,8 @@ private:
     using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using HighPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using Gain = dsp::Gain<float>;
-    juce::dsp::ProcessorChain < BandPassFilter,       // The variable band pass filter
+    juce::dsp::ProcessorChain < Gain,                 // Inpult level
+                                BandPassFilter,       // The variable band pass filter
                                 HighPassFilter,       // High pass filter before distorion stage
                                 // gain stage (opamp)
                                 // wave shaper opamp clipping
@@ -94,7 +97,7 @@ private:
     void valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) override;
     void updateParams();
     void setFrequencyFilterData(bool firstTime = false);
-    void setOutputLevelData();
+    void setLevelData();
 
     float mCurrentFilterFrequency;
     float mFilterQ;

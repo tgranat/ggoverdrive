@@ -31,10 +31,16 @@ private:
     // access the processor object that created it.
     GgOverdriveProcessor& processor;
 
+    Slider inputLevelSlider;
+    Label inputLevelLabel;
     Slider levelSlider;
+    Label levelLabel;
     Slider distSlider;
+    Label distLabel;
     Slider frequencySlider;
+    Label frequencyLabel;
 
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mInputLevelAttachement;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mLevelAttachement;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mDistAttachement;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> mFrequencyAttachement;
