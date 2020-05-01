@@ -134,15 +134,16 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     auto& diodeWaveshaper = processorChain.template get<ProcessorChainIndex::diodeClippingWaveshaper>();
     diodeWaveshaper.functionToUse = [](float x)
     {
-        //return jlimit(float(-0.1), float(0.1), x);
-        return std::tanh(x);
+
+        //return std::tanh(x);
+        return dsp::FastMathApproximations::tanh(x); // Note! This implementaion does not work well with input values larger than between -5 and +5
     };
 
     // Waveshaper for output limiter (after output level)
     auto& outputWaveshaper = processorChain.template get<ProcessorChainIndex::transistorStageWaveshaper>();
     outputWaveshaper.functionToUse = [](float x)
     {
-        return std::tanh(x);
+        return dsp::FastMathApproximations::tanh(x);
     };
 
 
