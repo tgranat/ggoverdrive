@@ -81,10 +81,10 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     addAndMakeVisible(frequencyLabel);
 
     //// Scope stuff
-    addAndMakeVisible(scopeComponent);
-    auto area = getLocalBounds();
-    scopeComponent.setTopLeftPosition(0, 120);
-    scopeComponent.setSize(area.getWidth(), area.getHeight() - 120);
+    //addAndMakeVisible(scopeComponent);
+    //auto area = getLocalBounds();
+    //scopeComponent.setTopLeftPosition(0, 120);
+    //scopeComponent.setSize(area.getWidth(), area.getHeight() - 120);
 }
 
 GgOverdriveEditor::~GgOverdriveEditor()
@@ -98,12 +98,13 @@ void GgOverdriveEditor::paint (Graphics& g)
     auto area = getLocalBounds();
     int aw = area.getWidth();
     int ah = area.getHeight();
+    g.drawRect(area, 1.f);
     Rectangle<int> topFrame = area.withTrimmedBottom(ah - 40);
 
     g.setColour(Colours::lightgrey);
     g.fillRect(topFrame);
     g.setColour(Colours::black);
-    g.drawRect(topFrame, 1.f);
+    //g.drawRect(topFrame, 1.f);
     
     g.setColour(Colours::black);
     g.setFont(Font("Ariel", 16.0f, Font::bold));
@@ -113,12 +114,12 @@ void GgOverdriveEditor::paint (Graphics& g)
     g.setColour(Colours::lightblue);
     g.fillRect(controlsFrame);
     g.setColour(Colours::black);
-    g.drawRect(controlsFrame, 1.f);
+    //g.drawRect(controlsFrame, 1.f);
 
     Rectangle<int> bottomFrame = Rectangle<int>(0, controlsFrame.getHeight() + topFrame.getHeight(), aw, ah - controlsFrame.getHeight() - topFrame.getHeight());
     g.setColour(Colours::lightgrey);
     g.fillRect(bottomFrame);
-    g.drawRect(bottomFrame, 1.f);
+    //g.drawRect(bottomFrame, 1.f);
 }
 
 void GgOverdriveEditor::resized()
