@@ -31,4 +31,4 @@ In the plugin the signal chain looks something like this:
 * Static gain stage to adjust the signal before the next clipping stage)
 * A waveshaper stage to clip the signal (simulating diode clipping)
 * A variable gain stage as output level control
-* Finally onr more waveshaper stage to limit the signal and avoid unwanted clipping in the rest of the DAW signal chain.
+* Finally one more waveshaper stage to limit the signal and avoid unwanted clipping in the rest of the DAW signal chain.
