@@ -120,6 +120,9 @@ void GgOverdriveEditor::paint (Graphics& g)
     g.setColour(Colours::lightgrey);
     g.fillRect(bottomFrame);
     //g.drawRect(bottomFrame, 1.f);
+
+    g.setColour(Colours::darkgrey);
+    g.drawRect(area, 1.f);
 }
 
 void GgOverdriveEditor::resized()
