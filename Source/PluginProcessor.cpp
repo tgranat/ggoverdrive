@@ -120,24 +120,31 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     *highPassFilter = *newCoefficients;
 
     // Waveshaper for opamp clipping
-    auto& opampWaveshaper = processorChain.template get<opampClippingWaveshaper>();
+    auto& opampWaveshaper = processorChain.template get<ProcessorChainIndex::opampClippingWaveshaper>();
     opampWaveshaper.functionToUse = [](float x)
     {
         return jlimit(float(-0.9), float(0.9), x); 
-        //return std::tanh(x);
     };
 
     // Gain stage after opamp stage to make sure diodes clips before opamp
-    auto& level = processorChain.get<preDiodeClippingGain>();
-    level.setGainLinear(10.f);  
+    auto& level = processorChain.get<ProcessorChainIndex::preDiodeClippingGain>();
+    level.setGainLinear(15.f);  
 
     // Waveshaper for diode clipping. Soft clipping.
-    auto& diodeWaveshaper = processorChain.template get<diodeClippingWaveshaper>();
+    auto& diodeWaveshaper = processorChain.template get<ProcessorChainIndex::diodeClippingWaveshaper>();
     diodeWaveshaper.functionToUse = [](float x)
     {
         //return jlimit(float(-0.1), float(0.1), x);
         return std::tanh(x);
     };
+
+    // Waveshaper for output limiter (after output level)
+    auto& outputWaveshaper = processorChain.template get<ProcessorChainIndex::transistorStageWaveshaper>();
+    outputWaveshaper.functionToUse = [](float x)
+    {
+        return std::tanh(x);
+    };
+
 
     setLevelData();
 }
@@ -195,6 +202,7 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     //processorChain.setBypassed<opampClippingWaveshaper>(true);
     //processorChain.setBypassed<opampDistGain>(true);
     //processorChain.setBypassed <ProcessorChainIndex::diodeClippingWaveshaper>(true);
+    //processorChain.setBypassed <ProcessorChainIndex::preDiodeClippingGain>(true);
 
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
@@ -263,7 +271,7 @@ void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
         //mFilterQ = 4;  
         mFilterQ = mFrequency / 50;  // Q function of frequency and bandwidth
         // .state has to do with that the filter is duplicated
-        auto& frequencyFilter = processorChain.get<variableBandPass>().state;
+        auto& frequencyFilter = processorChain.get<ProcessorChainIndex::variableBandPass>().state;
         dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
         *frequencyFilter = *newCoefficients;
         mCurrentFilterFrequency = mFrequency;
@@ -271,14 +279,14 @@ void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
 }
 
 void GgOverdriveProcessor::setLevelData() {
-    auto& inputLevel = processorChain.get<inputLevelGain>();
+    auto& inputLevel = processorChain.get<ProcessorChainIndex::inputLevelGain>();
     inputLevel.setGainLinear(mInputLevel);
 
-    auto& distLevel = processorChain.get<opampDistGain>();
+    auto& distLevel = processorChain.get<ProcessorChainIndex::opampDistGain>();
     distLevel.setGainLinear(mDistortion * 12.f);
 
-    auto& level = processorChain.get<outputLevelGain>();
-    level.setGainLinear(mLevel * 0.3f);
+    auto& level = processorChain.get<ProcessorChainIndex::outputLevelGain>();
+    level.setGainLinear(mLevel);
 }
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {

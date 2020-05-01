@@ -75,7 +75,8 @@ private:
         opampClippingWaveshaper,
         preDiodeClippingGain,
         diodeClippingWaveshaper,
-        outputLevelGain
+        outputLevelGain,
+        transistorStageWaveshaper,
     };
 
     // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
@@ -92,7 +93,8 @@ private:
                                 WaveShaper,           // Opamp clipping stage (hard square wave clipping)
                                 Gain,                 // Static gain stage to get diode clipping before opamp clipping
                                 WaveShaper,           // WaveShaper diode soft clipping stage
-                                Gain>                 // Main plugin Output level
+                                Gain,                 // Main plugin Output level
+                                WaveShaper>           // "Transistor stage" and output limiter
                                 processorChain;
 
     AudioProcessorValueTreeState mAPVTS;
