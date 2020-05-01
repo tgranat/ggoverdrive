@@ -116,29 +116,25 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 
     // Static high pass filter before distortion stage. Cut-off frequency 312 Hz.  6 dB/octave.
     // Using dsp::FilterDesign to make sure it's first order.
-    auto& highPassFilter = processorChain.get<highPassIndex>().state;
+    auto& highPassFilter = processorChain.get<preDistHighPass>().state;
     auto coeffs = dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(312.f, mSampleRate, 1);
     dsp::IIR::Coefficients<float>::Ptr newCoefficients = coeffs[0];
     *highPassFilter = *newCoefficients;
 
-    // Bias to get some asynch clipping
-    auto& bias = processorChain.template get<biasIndex>();
-    bias.setBias(-0.01f);
-
     // Waveshaper for opamp clipping
-    auto& opampWaveshaper = processorChain.template get<opampClippingIndex>();
+    auto& opampWaveshaper = processorChain.template get<opampClippingWaveshaper>();
     opampWaveshaper.functionToUse = [](float x)
     {
-        return jlimit(float(-0.2), float(0.2), x); 
+        return jlimit(float(-0.9), float(0.9), x); 
         //return std::tanh(x);
     };
 
-    // Gain stage after opamp stage. 
-    auto& level = processorChain.get<afterOpampGainIndex>();
-    level.setGainLinear(50.f);  // don't know???
+    // Gain stage after opamp stage to make sure diodes clips before opamp
+    auto& level = processorChain.get<preDiodeClippingGain>();
+    level.setGainLinear(10.f);  
 
     // Waveshaper for diode clipping. Soft clipping.
-    auto& diodeWaveshaper = processorChain.template get<diodeClippingIndex>();
+    auto& diodeWaveshaper = processorChain.template get<diodeClippingWaveshaper>();
     diodeWaveshaper.functionToUse = [](float x)
     {
         //return jlimit(float(-0.1), float(0.1), x);
@@ -196,12 +192,11 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
         mParamsHaveBeenUpdatedInGUI = false;
     }
 
-    // Development stuff. Disableing one or more processes in the chain
-    //processorChain.setBypassed<bandPassIndex> (true); 
-    //processorChain.setBypassed<opampClippingIndex>(true); 
-    //processorChain.setBypassed<opampGainIndex>(true);
-    //processorChain.setBypassed <diodeClippingIndex>(true);
-    processorChain.setBypassed <biasIndex>(true);  // Remove bias, doesnt work good if input is low
+    // Development stuff. Disabling one or more processes in the chain
+    //processorChain.setBypassed<ProcessorChainIndex::variableBandPass> (true);
+    //processorChain.setBypassed<opampClippingWaveshaper>(true);
+    //processorChain.setBypassed<opampDistGain>(true);
+    //processorChain.setBypassed <ProcessorChainIndex::diodeClippingWaveshaper>(true);
 
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
@@ -216,7 +211,7 @@ AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParame
 
     const float maxInGain = Decibels::decibelsToGain(18.f);
     const float maxOutGain = Decibels::decibelsToGain(18.f);
-    const float maxDist = Decibels::decibelsToGain(18.f);
+    const float maxDist = Decibels::decibelsToGain(24.f);
 
     parameters.push_back(std::make_unique<AudioParameterFloat>("INPUTLEVEL", "pregain",
         NormalisableRange<float> {1.0f / maxInGain, maxInGain, 0.001f,
@@ -270,7 +265,7 @@ void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
         //mFilterQ = 4;  
         mFilterQ = mFrequency / 50;  // Q function of frequency and bandwidth
         // .state has to do with that the filter is duplicated
-        auto& frequencyFilter = processorChain.get<bandPassIndex>().state;
+        auto& frequencyFilter = processorChain.get<variableBandPass>().state;
         dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
         *frequencyFilter = *newCoefficients;
         mCurrentFilterFrequency = mFrequency;
@@ -278,13 +273,13 @@ void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
 }
 
 void GgOverdriveProcessor::setLevelData() {
-    auto& inputLevel = processorChain.get<inputLevelIndex>();
+    auto& inputLevel = processorChain.get<inputLevelGain>();
     inputLevel.setGainLinear(mInputLevel);
 
-    auto& distLevel = processorChain.get<opampGainIndex>();
+    auto& distLevel = processorChain.get<opampDistGain>();
     distLevel.setGainLinear(mDistortion * 12.f);
 
-    auto& level = processorChain.get<levelIndex>();
+    auto& level = processorChain.get<outputLevelGain>();
     level.setGainLinear(mLevel * 0.3f);
 }
 

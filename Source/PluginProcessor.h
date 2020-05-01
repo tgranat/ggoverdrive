@@ -68,17 +68,16 @@ public:
     AudioBufferQueue<float>& getAudioBufferQueue() noexcept { return audioBufferQueue; }
 
 private:
-    enum
+    enum ProcessorChainIndex
     {
-        inputLevelIndex,
-        bandPassIndex,
-        highPassIndex,
-        biasIndex,
-        opampGainIndex,
-        opampClippingIndex,
-        afterOpampGainIndex,
-        diodeClippingIndex,
-        levelIndex
+        inputLevelGain,
+        variableBandPass,
+        preDistHighPass,
+        opampDistGain,
+        opampClippingWaveshaper,
+        preDiodeClippingGain,
+        diodeClippingWaveshaper,
+        outputLevelGain
     };
 
     // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
@@ -91,7 +90,6 @@ private:
     juce::dsp::ProcessorChain < Gain,                 // Input level
                                 BandPassFilter,       // The variable band pass filter
                                 HighPassFilter,       // High pass filter before distorion stage
-                                Bias,                 // change bias to get some asych clipping 
                                 Gain,                 // Opamp gain
                                 WaveShaper,           // Opamp clipping stage (hard square wave clipping)
                                 Gain,                 // Static gain stage to get diode clipping before opamp clipping
