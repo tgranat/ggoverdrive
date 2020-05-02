@@ -76,6 +76,7 @@ private:
         preDiodeClippingGain,
         diodeClippingWaveshaper,
         outputLevelGain,
+        transistorStageHighPass,
         transistorStageWaveshaper,
     };
 
@@ -94,6 +95,7 @@ private:
                                 Gain,                 // Static gain stage to get diode clipping before opamp clipping
                                 WaveShaper,           // WaveShaper diode soft clipping stage
                                 Gain,                 // Main plugin Output level
+                                HighPassFilter,       // HP filter before output stage 
                                 WaveShaper>           // "Transistor stage" and output limiter
                                 processorChain;
 

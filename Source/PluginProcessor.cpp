@@ -5,10 +5,12 @@
 
 
   TODO:
-  compared to the real pedal, a lot of hig mids and treble are missing. Does this filter cut
-  to much treble, too "perfect"?
+  compared to the real pedal, a lot of hig mids and treble are missing. 
+  Does this filter cut to much treble, too "perfect"? No, measured pedal. BP filter looks ok
   Need to do better frequency analyse.
-  Can also be the distortion part, missing overtones, harmonics?
+  Can also be the distortion part, missing overtones, harmonics? Looks like a HP filter affects square wave from pedal. Where? It's the last stage 22 Hz HP
+
+  While playing, looks like pedal has a little more around 2 kHz. Where does it come from? Maybe add a low Q BP around 2 kHz? between or after clipping stages.
 
   ==============================================================================
 */
@@ -146,6 +148,13 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
         return dsp::FastMathApproximations::tanh(x); // Note! This implementaion does not work well with input values larger than between -5 and +5
     };
 
+    // Static high pass filter before output stage. Cut-off frequency 22 Hz.  6 dB/octave.
+    // Using dsp::FilterDesign to make sure it's first order.
+    auto& lastHighPassFilter = processorChain.get<ProcessorChainIndex::transistorStageHighPass>().state;
+    auto lastCoeffs = dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(22.f, mSampleRate, 1);
+    //dsp::IIR::Coefficients<float>::Ptr newCoefficients = lastCoeffs[0];
+    *lastHighPassFilter = *lastCoeffs[0];
+
     // Waveshaper for output limiter (after output level)
     auto& outputWaveshaper = processorChain.template get<ProcessorChainIndex::transistorStageWaveshaper>();
     outputWaveshaper.functionToUse = [](float x)
@@ -207,10 +216,12 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
 
     // Development stuff. Disabling one or more processes in the chain
     //processorChain.setBypassed<ProcessorChainIndex::variableBandPass> (true);
-    //processorChain.setBypassed<opampClippingWaveshaper>(true);
+    //processorChain.setBypassed<ProcessorChainIndex::preDistHighPass>(true);
     //processorChain.setBypassed<opampDistGain>(true);
-    //processorChain.setBypassed <ProcessorChainIndex::diodeClippingWaveshaper>(true);
+    //processorChain.setBypassed<opampClippingWaveshaper>(true);
     //processorChain.setBypassed <ProcessorChainIndex::preDiodeClippingGain>(true);
+    //processorChain.setBypassed <ProcessorChainIndex::diodeClippingWaveshaper>(true);
+
 
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::ProcessContextReplacing<float> context(ioBuffer);
