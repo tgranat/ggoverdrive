@@ -3,6 +3,13 @@
 
   Systech Overdrive Pedal Simulator
 
+
+  TODO:
+  compared to the real pedal, a lot of hig mids and treble are missing. Does this filter cut
+  to much treble, too "perfect"?
+  Need to do better frequency analyse.
+  Can also be the distortion part, missing overtones, harmonics?
+
   ==============================================================================
 */
 
@@ -284,10 +291,10 @@ void GgOverdriveProcessor::setLevelData() {
     inputLevel.setGainLinear(mInputLevel);
 
     auto& distLevel = processorChain.get<ProcessorChainIndex::opampDistGain>();
-    distLevel.setGainLinear(mDistortion * 12.f);
+    distLevel.setGainLinear(mDistortion * 40.f);
 
     auto& level = processorChain.get<ProcessorChainIndex::outputLevelGain>();
-    level.setGainLinear(mLevel);
+    level.setGainLinear(mLevel * 0.3f);  
 }
 
 void GgOverdriveProcessor::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChanged, const Identifier& property) {
