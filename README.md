@@ -5,6 +5,8 @@ Just for fun, I have been trying to simulate the Systech Overdrive pedal from th
 This is an quite rare and odd overdrive with a variable wah-like bandpass filter before an 
 opamp overdrive stage with diode clipping.
 
+The plugin is ok now, but not as the real analog pedal.
+
 The plugin uses the JUCE framework https://docs.juce.com/master/index.html. I have only
 tested the plugin with the Reaper DAW on Windows.
 
