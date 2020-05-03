@@ -3,15 +3,6 @@
 
   Systech Overdrive Pedal Simulator
 
-
-  TODO:
-  compared to the real pedal, a lot of hig mids and treble are missing. 
-  Does this filter cut to much treble, too "perfect"? No, measured pedal. BP filter looks ok
-  Need to do better frequency analyse.
-  Can also be the distortion part, missing overtones, harmonics? Looks like a HP filter affects square wave from pedal. Where? It's the last stage 22 Hz HP
-
-  While playing, looks like pedal has a little more around 2 kHz. Where does it come from? Maybe add a low Q BP around 2 kHz? between or after clipping stages.
-
   ==============================================================================
 */
 
@@ -228,7 +219,7 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     processorChain.process(context);
 
     // Scope stuff
-    scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
+    //scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
 }
 
 AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {
@@ -287,8 +278,7 @@ void GgOverdriveProcessor::updateParams() {
 
 void GgOverdriveProcessor::setFrequencyFilterData(bool firstTime) {
     if (firstTime || mCurrentFilterFrequency != mFrequency) {
-        //mFilterQ = 4;  
-        mFilterQ = mFrequency / 50;  // Q function of frequency and bandwidth
+        mFilterQ = mFrequency / 60;  // Q function of frequency and bandwidth. 
         // .state has to do with that the filter is duplicated
         auto& frequencyFilter = processorChain.get<ProcessorChainIndex::variableBandPass>().state;
         dsp::IIR::Coefficients<float>::Ptr newCoefficients = dsp::IIR::Coefficients<float>::makeBandPass(mSampleRate, mFrequency, mFilterQ);
