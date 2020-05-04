@@ -66,6 +66,8 @@ public:
     AudioBufferQueue<float>& getAudioBufferQueue() noexcept { return audioBufferQueue; }
 
 private:
+    static const int mOversamplingFactor = 1;     //  2 ^ mOversamplingFactor times oversampling 
+
     enum ProcessorChainIndex
     {
         inputLevelGain,
@@ -112,6 +114,8 @@ private:
     float mSampleRate = 0;
 
     std::atomic<bool> mParamsHaveBeenUpdatedInGUI{ false };
+
+    std::unique_ptr<dsp::Oversampling<float>> mOversampling;
 
     // Scope stuff
     AudioBufferQueue<float> audioBufferQueue;
