@@ -24,6 +24,7 @@ GgOverdriveProcessor::GgOverdriveProcessor()
 {
     mAPVTS.state.addListener(this);
 
+    //mOversampling.reset(new dsp::Oversampling<float>(2, mOversamplingFactor, dsp::Oversampling<float>::filterHalfBandFIREquiripple, false));
     mOversampling.reset(new dsp::Oversampling<float>(2, mOversamplingFactor, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, false));
 }
 
@@ -119,7 +120,7 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     bool setFilterDataFirstTime = true;
     setFrequencyFilterData(setFilterDataFirstTime);
 
-    // Static high pass filter before distortion stage. Cut-off frequency 312 Hz.  6 dB/octave.
+    // Static high pass filter before opamp distortion stage. Cut-off frequency 312 Hz.  6 dB/octave.
     // Using dsp::FilterDesign to make sure it's first order.
     auto& highPassFilter = processorChain.get<preDistHighPass>().state;
     auto coeffs = dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(312.f, oversampledSampleRate, 1);
@@ -146,12 +147,13 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
         return dsp::FastMathApproximations::tanh(x); // Note! This implementaion does not work well with input values larger than between -5 and +5
     };
 
+    // Static low pass filter to remove high frequencies after clipping
+    auto& postClippingFilter = processorChain.get<ProcessorChainIndex::postClippingFilter>().state;
+    *postClippingFilter = *dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(20000.f, oversampledSampleRate, 1)[0];
+
     // Static high pass filter before output stage. Cut-off frequency 22 Hz.  6 dB/octave.
-    // Using dsp::FilterDesign to make sure it's first order.
     auto& lastHighPassFilter = processorChain.get<ProcessorChainIndex::transistorStageHighPass>().state;
-    auto lastCoeffs = dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(22.f, oversampledSampleRate, 1);
-    //dsp::IIR::Coefficients<float>::Ptr newCoefficients = lastCoeffs[0];
-    *lastHighPassFilter = *lastCoeffs[0];
+    *lastHighPassFilter = *dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(22.f, oversampledSampleRate, 1)[0];
 
     // Waveshaper for output limiter (after output level)
     auto& outputWaveshaper = processorChain.template get<ProcessorChainIndex::transistorStageWaveshaper>();
@@ -215,6 +217,7 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     // Development stuff. Disabling one or more processes in the chain
     //processorChain.setBypassed<ProcessorChainIndex::variableBandPass> (true);
     //processorChain.setBypassed<ProcessorChainIndex::preDistHighPass>(true);
+    //processorChain.setBypassed<ProcessorChainIndex::transistorStageHighPass>(true);
     //processorChain.setBypassed<opampDistGain>(true);
     //processorChain.setBypassed<opampClippingWaveshaper>(true);
     //processorChain.setBypassed <ProcessorChainIndex::preDiodeClippingGain>(true);
@@ -231,7 +234,7 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     mOversampling->processSamplesDown(ioBuffer);
 
     // Scope stuff
-    //scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
+    scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
 }
 
 AudioProcessorValueTreeState::ParameterLayout GgOverdriveProcessor::createParameters() {

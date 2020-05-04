@@ -77,27 +77,28 @@ private:
         opampClippingWaveshaper,
         preDiodeClippingGain,
         diodeClippingWaveshaper,
+        postClippingFilter,
         outputLevelGain,
         transistorStageHighPass,
         transistorStageWaveshaper,
     };
 
     // ProcessorDuplicator is used to duplicate mono processor classes. dsp::IIR::Filter only processes one channel.
-    using BandPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
-    using HighPassFilter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
+    using Filter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using WaveShaper = dsp::WaveShaper<float>;
     using Bias = dsp::Bias<float>;
 
     using Gain = dsp::Gain<float>;
     juce::dsp::ProcessorChain < Gain,                 // Input level
-                                BandPassFilter,       // The variable band pass filter
-                                HighPassFilter,       // High pass filter before distorion stage
+                                Filter,               // The variable band pass filter
+                                Filter,               // High pass filter removing unwanted bass before clipping
                                 Gain,                 // Opamp gain
                                 WaveShaper,           // Opamp clipping stage (hard square wave clipping)
                                 Gain,                 // Static gain stage to get diode clipping before opamp clipping
                                 WaveShaper,           // WaveShaper diode soft clipping stage
+                                Filter,               // low pass filter removing very high frequencies
                                 Gain,                 // Main plugin Output level
-                                HighPassFilter,       // HP filter before output stage 
+                                Filter,               // HP filter before output stage
                                 WaveShaper>           // "Transistor stage" and output limiter
                                 processorChain;
 

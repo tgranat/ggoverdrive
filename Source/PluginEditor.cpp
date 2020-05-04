@@ -81,10 +81,10 @@ GgOverdriveEditor::GgOverdriveEditor (GgOverdriveProcessor& p)
     addAndMakeVisible(frequencyLabel);
 
     // Scope stuff
-    //addAndMakeVisible(scopeComponent);
-    //auto area = getLocalBounds();
-    //scopeComponent.setTopLeftPosition(0, 120);
-    //scopeComponent.setSize(area.getWidth(), area.getHeight() - 120);
+    addAndMakeVisible(scopeComponent);
+    auto area = getLocalBounds();
+    scopeComponent.setTopLeftPosition(0, 120);
+    scopeComponent.setSize(area.getWidth(), area.getHeight() - 120);
 }
 
 GgOverdriveEditor::~GgOverdriveEditor()
