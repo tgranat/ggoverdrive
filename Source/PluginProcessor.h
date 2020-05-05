@@ -66,7 +66,7 @@ public:
     AudioBufferQueue<float>& getAudioBufferQueue() noexcept { return audioBufferQueue; }
 
 private:
-    static const int mOversamplingFactor = 1;     //  2 ^ mOversamplingFactor times oversampling 
+    static const int mOversamplingFactor = 2;     //  2 ^ mOversamplingFactor times oversampling (0 = no oversamplng)
 
     enum ProcessorChainIndex
     {
@@ -87,7 +87,6 @@ private:
     using Filter = dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>>;
     using WaveShaper = dsp::WaveShaper<float>;
     using Bias = dsp::Bias<float>;
-
     using Gain = dsp::Gain<float>;
     juce::dsp::ProcessorChain < Gain,                 // Input level
                                 Filter,               // The variable band pass filter

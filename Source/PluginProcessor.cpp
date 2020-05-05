@@ -114,9 +114,9 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     mOversampling->reset();
     int oversampledSampleRate = mSampleRate * pow(2, mOversamplingFactor);
 
+    // Init values for variable BP filter
     mCurrentFilterFrequency = mFrequency;
     mCurrentDistortion = mDistortion;
-
     bool setFilterDataFirstTime = true;
     setFrequencyFilterData(setFilterDataFirstTime);
 
@@ -142,14 +142,13 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     auto& diodeWaveshaper = processorChain.template get<ProcessorChainIndex::diodeClippingWaveshaper>();
     diodeWaveshaper.functionToUse = [](float x)
     {
-
         //return std::tanh(x);
         return dsp::FastMathApproximations::tanh(x); // Note! This implementaion does not work well with input values larger than between -5 and +5
     };
 
     // Static low pass filter to remove high frequencies after clipping
     auto& postClippingFilter = processorChain.get<ProcessorChainIndex::postClippingFilter>().state;
-    *postClippingFilter = *dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(20000.f, oversampledSampleRate, 1)[0];
+    *postClippingFilter = *dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(20000.f, oversampledSampleRate, 2)[0];
 
     // Static high pass filter before output stage. Cut-off frequency 22 Hz.  6 dB/octave.
     auto& lastHighPassFilter = processorChain.get<ProcessorChainIndex::transistorStageHighPass>().state;
@@ -161,7 +160,6 @@ void GgOverdriveProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     {
         return dsp::FastMathApproximations::tanh(x);
     };
-
 
     setLevelData();
 }
@@ -222,15 +220,13 @@ void GgOverdriveProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&
     //processorChain.setBypassed<opampClippingWaveshaper>(true);
     //processorChain.setBypassed <ProcessorChainIndex::preDiodeClippingGain>(true);
     //processorChain.setBypassed <ProcessorChainIndex::diodeClippingWaveshaper>(true);
+    //processorChain.setBypassed <ProcessorChainIndex::postClippingFilter>(true);
 
     dsp::AudioBlock<float> ioBuffer(buffer);
     dsp::AudioBlock<float>oversampledBuffer = mOversampling->processSamplesUp(ioBuffer);
-
     dsp::ProcessContextReplacing<float> context(oversampledBuffer);
-    //dsp::ProcessContextReplacing<float> context(ioBuffer);
 
     processorChain.process(context);
-
     mOversampling->processSamplesDown(ioBuffer);
 
     // Scope stuff

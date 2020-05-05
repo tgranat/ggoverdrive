@@ -133,7 +133,7 @@ public:
         : audioBufferQueue(queueToUse)
     {
         sampleData.fill(SampleType(0));   // Fill with 0.f (if SampleType is float). Reminder for me
-        setFramesPerSecond(30);
+        setFramesPerSecond(15);
     }
 
     //==============================================================================
@@ -146,7 +146,7 @@ public:
     //==============================================================================
     void paint(Graphics& g) override
     {
-        g.fillAll(juce::Colours::black);
+        //g.fillAll(juce::Colours::black);
         g.setColour(juce::Colours::white);
 
         auto area = getLocalBounds();
@@ -160,8 +160,6 @@ public:
         // scaler = 0.5, offset = h/2
         // (if also plotting spectrum, then set height to h/4)
         plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(0.5), h /2); 
-        //auto scopeRect = Rectangle<SampleType>{ SampleType(0), SampleType(0), w, h / 2 };
-        //plot(sampleData.data(), sampleData.size(), g, scopeRect, SampleType(1), h / 4);
 
         // Spectrum
         //auto spectrumRect = Rectangle<SampleType>{ SampleType(0), h / 2, w, h / 2 };
