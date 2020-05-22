@@ -1,3 +1,7 @@
+# VS
+out/
+.vs/
+# JUCE
 Builds/
 JuceLibraryCode/
 .vs/
