@@ -29,7 +29,10 @@ juce_generate_juce_header(${BaseTargetName})
 
 target_sources(${BaseTargetName} PRIVATE
         PluginProcessor.cpp
-        PluginEditor.cpp)
+        PluginProcessor.h
+        PluginEditor.cpp
+        PluginEditor.h
+        Scope.h)
 
 target_compile_definitions(${BaseTargetName} PUBLIC
         JUCE_WEB_BROWSER=0
