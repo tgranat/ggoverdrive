@@ -1,7 +1,5 @@
 set (BaseTargetName ${PROJECT_NAME})
 
-# How do I change runtime target directory from default (a VST3 dir)
-
 # Example:
 #  1)   cmake -B cmake-build
 #  2)   cmake --build cmake-build
@@ -19,10 +17,12 @@ juce_add_plugin("${BaseTargetName}"
         NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-        COPY_PLUGIN_AFTER_BUILD TRUE
+        COPY_PLUGIN_AFTER_BUILD TRUE               #
+		VST3_COPY_DIR C:/VST3_development_plugins  # Change this location if you want. Or remove.
         PLUGIN_MANUFACTURER_CODE GgFx
         PLUGIN_CODE GgOd
         FORMATS AU VST3 Standalone
+		VST3_CATEGORIES Distortion
         PRODUCT_NAME "Systech Overdrive Simulator")
 
 juce_generate_juce_header(${BaseTargetName})
