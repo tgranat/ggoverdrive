@@ -17,7 +17,7 @@ juce_add_plugin("${BaseTargetName}"
         NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-        COPY_PLUGIN_AFTER_BUILD TRUE               #
+        COPY_PLUGIN_AFTER_BUILD TRUE               # Set to FALSE if built runtime shouldn't be copied
 		VST3_COPY_DIR C:/VST3_development_plugins  # Change this location if you want. Or remove.
         PLUGIN_MANUFACTURER_CODE GgFx
         PLUGIN_CODE GgOd
