@@ -1,14 +1,17 @@
 # ggoverdrive
 
-Just for fun, I have been trying to simulate the Systech Overdrive pedal from the 70's.
+Just for fun, I'm trying to simulate the Systech Overdrive pedal from the 70's.
 
 This is an quite rare and odd overdrive with a variable wah-like bandpass filter before an 
 opamp overdrive stage with diode clipping.
 
-The plugin is ok now, but not as the real analog pedal.
+The plugin is ok now, but not as the real analog pedal of course.
 
 The plugin uses the JUCE framework https://docs.juce.com/master/index.html. I have only
 tested the plugin with the Reaper DAW on Windows.
+
+I'm now using JUCE 6 and building using CMake. See https://github.com/juce-framework/JUCE
+(juce6 branch at the moment of writing) for more info about JUCE and CMake.
 
 ![Systech Overdrive](systechod-front.JPG)
 ![Plugin](plugin.png)
