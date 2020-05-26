@@ -1,12 +1,5 @@
 set (BaseTargetName ${PROJECT_NAME})
 
-# Example:
-#  1)   cmake -B cmake-build
-#  2)   cmake --build cmake-build
-#
-# How to build Release on Windows (Debug is default)
-#  cmake --build cmake-build --config Release
-
 juce_add_plugin("${BaseTargetName}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
         # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
@@ -17,12 +10,12 @@ juce_add_plugin("${BaseTargetName}"
         NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-        COPY_PLUGIN_AFTER_BUILD TRUE               # Set to FALSE if built runtime shouldn't be copied
-		VST3_COPY_DIR C:/VST3_development_plugins  # Change this location if you want. Or remove.
+        COPY_PLUGIN_AFTER_BUILD FALSE              # Set to TRUE if built runtime should be copied to VST3_COPY_DIR
+        VST3_COPY_DIR C:/VST3_development_plugins  # Change this location if you want. Or remove.
         PLUGIN_MANUFACTURER_CODE GgFx
         PLUGIN_CODE GgOd
         FORMATS AU VST3 Standalone
-		VST3_CATEGORIES Distortion
+        VST3_CATEGORIES Distortion
         PRODUCT_NAME "Systech Overdrive Simulator")
 
 juce_generate_juce_header(${BaseTargetName})
@@ -41,7 +34,7 @@ target_compile_definitions(${BaseTargetName} PUBLIC
 
 target_link_libraries(${BaseTargetName} PRIVATE 
         juce::juce_audio_utils
-		juce::juce_dsp
+        juce::juce_dsp
 		juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
