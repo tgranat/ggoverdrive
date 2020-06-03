@@ -35,6 +35,7 @@ for:
     - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
     - cmake --build cmake-build-install --target install
     
+-    
   matrix:
     only:
       - image: macOS
