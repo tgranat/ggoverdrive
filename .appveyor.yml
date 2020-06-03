@@ -13,12 +13,12 @@ image: Visual Studio 2019
 install:
     - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
-    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
     - cmake --build cmake-build-install --target install
     
 build_script:
     - cd %APPVEYOR_BUILD_FOLDER%
     - git branch
-    - cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6-preview
+    - cmake -B cmake-build -DCMAKE_PREFIX_PATH=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
     - cmake --build cmake-build
 
