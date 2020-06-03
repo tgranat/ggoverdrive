@@ -7,14 +7,14 @@ branches:
     - juce6
       
 image: 
-  # - Visual Studio 2019
+  - Visual Studio 2019
   - Ubuntu
 
 install:
   # Install JUCE dependencies for Ubuntu
   - sh: sudo apt-get update
-  - sh: sudo apt-get -y install libfreetype6-dev
-  - sh: sudo apt-get -y install libx11-dev
+  # - sh: sudo apt-get -y install libfreetype6-dev
+  # - sh: sudo apt-get -y install libx11-dev
   - sh: sudo apt-get -y install libxinerama-dev
   - sh: sudo apt-get -y install libxrandr-dev
   - sh: sudo apt-get -y install libxcursor-dev
