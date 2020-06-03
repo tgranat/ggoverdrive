@@ -17,7 +17,8 @@ install:
     - cmake --build cmake-build-install --target install
     
 build_script:
-    - cd %APPVEYOR_BUILD_FOLDER%/ggoverdrive
+    - cd %APPVEYOR_BUILD_FOLDER%
+    - git branch
     - cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6-preview
     - cmake --build cmake-build
 
