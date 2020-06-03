@@ -1,4 +1,5 @@
 # Testing appveyor
+# Building the "juce6" branch
 
 branches:
   only:
@@ -11,7 +12,11 @@ image: Visual Studio 2019
 install:
   - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git JUCE
   - cd %APPVEYOR_BUILD_FOLDER%/JUCE
-  - cmake -B cmake-build-^Cstall -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
+  - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
   - cmake --build cmake-build-install --target install
 
-build: off
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6-preview
+  - cmake --build 
+  - cmake --build cmake-build
