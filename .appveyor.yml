@@ -1,22 +1,32 @@
 # Testing appveyor
-# Building the "juce6" branch
-
-branches:
-  only:
-    - juce6
 
 image: Visual Studio 2019
 
+# Building the "juce6" branch
+-
+  branches:
+    only:
+      - juce6
+
 # Build and install JUCE6 from GitHub
 
-install:
-  - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git JUCE
-  - cd %APPVEYOR_BUILD_FOLDER%/JUCE
-  - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
-  - cmake --build cmake-build-install --target install
+  install:
+    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
+    - cmake --build cmake-build-install --target install
 
-build_script:
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6-preview
-  - cmake --build 
-  - cmake --build cmake-build
+  build_script:
+    - cd %APPVEYOR_BUILD_FOLDER%/ggoverdrive
+    - cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6-preview
+    - cmake --build cmake-build
+...
+
+# Don't build master for now
+-
+  branches:
+    only:
+      - master
+      
+  build: off
+....
