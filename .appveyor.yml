@@ -7,21 +7,22 @@ branches:
     - juce6
       
 image: 
-  - Visual Studio 2019
-  - Ubuntu
+  #- Visual Studio 2019
+  #- Ubuntu
+  - macOS
 
 install:
   # Install JUCE dependencies for Ubuntu
-  - sh: sudo apt-get update
-  # - sh: sudo apt-get -y install libfreetype6-dev
-  # - sh: sudo apt-get -y install libx11-dev
-  - sh: sudo apt-get -y install libxinerama-dev
-  - sh: sudo apt-get -y install libxrandr-dev
-  - sh: sudo apt-get -y install libxcursor-dev
-  - sh: sudo apt-get -y install mesa-common-dev
-  - sh: sudo apt-get -y install libasound2-dev
-  - sh: sudo apt-get -y install freeglut3-dev
-  - sh: sudo apt-get -y install libxcomposite-dev
+  #- sh: sudo apt-get update
+  ## - sh: sudo apt-get -y install libfreetype6-dev
+  ## - sh: sudo apt-get -y install libx11-dev
+  #- sh: sudo apt-get -y install libxinerama-dev
+  #- sh: sudo apt-get -y install libxrandr-dev
+  #- sh: sudo apt-get -y install libxcursor-dev
+  #- sh: sudo apt-get -y install mesa-common-dev
+  #- sh: sudo apt-get -y install libasound2-dev
+  #- sh: sudo apt-get -y install freeglut3-dev
+  #- sh: sudo apt-get -y install libxcomposite-dev
   # Build and install JUCE6 from GitHub
   - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
   - cmd: cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
