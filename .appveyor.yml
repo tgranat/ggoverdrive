@@ -7,18 +7,20 @@ branches:
     - juce6
       
 image: 
-  - Visual Studio 2019
+  # - Visual Studio 2019
   - Ubuntu
 
-# Build and install JUCE6 from GitHub
-
 install:
-    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
-    - cmd: cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
-    - sh: cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
-    - cmd: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
-    - sh: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
-    - cmake --build cmake-build-install --target install
+  # Install JUCE dependencies for Ubuntu
+  - sh: sudo apt-get update
+  - sh: sudo apt-get sudo apt-get -y install libfreetype6-dev sudo apt-get -y install libx11-dev sudo apt-get -y install libxinerama-dev sudo apt-get -y install libxrandr-dev sudo apt-get -y install libxcursor-dev sudo apt-get -y install mesa-common-dev sudo apt-get -y install libasound2-dev sudo apt-get -y install freeglut3-dev sudo apt-get -y install libxcomposite-dev
+  # Build and install JUCE6 from GitHub
+  - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+  - cmd: cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
+  - sh: cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
+  - cmd: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
+  - sh: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+  - cmake --build cmake-build-install --target install
     
 build_script:
     - cmd: cd %APPVEYOR_BUILD_FOLDER%
