@@ -29,21 +29,39 @@ for:
     - sh: sudo apt-get -y install libasound2-dev
     - sh: sudo apt-get -y install freeglut3-dev
     - sh: sudo apt-get -y install libxcomposite-dev
+    # Build and install JUCE6 from GitHub
+    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+    - cmake --build cmake-build-install --target install
+    
+  matrix:
+    only:
+      - image: macOS
+      
+  install:
+     # Build and install JUCE6 from GitHub
+    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+    - cmake --build cmake-build-install --target install
 
-install:
-   # Build and install JUCE6 from GitHub
-  - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
-  - cmd: cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
-  - sh: cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
-  - cmd: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
-  - sh: cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
-  - cmake --build cmake-build-install --target install
+  matrix:
+    only:
+      - image: Visual Studio 2019
+      
+  install:
+    # Build and install JUCE6 from GitHub
+    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
+    - cmake --build cmake-build-install --target install    
     
 build_script:
-    - cmd: cd %APPVEYOR_BUILD_FOLDER%
-    - sh: cd $APPVEYOR_BUILD_FOLDER
-    - git branch
-    - cmd: cmake -B cmake-build -DCMAKE_PREFIX_PATH=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
-    - sh: cmake -B cmake-build -DCMAKE_PREFIX_PATH=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
-    - cmake --build cmake-build
+  - cmd: cd %APPVEYOR_BUILD_FOLDER%
+  - sh: cd $APPVEYOR_BUILD_FOLDER
+  - git branch
+  - cmd: cmake -B cmake-build -DCMAKE_PREFIX_PATH=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
+  - sh: cmake -B cmake-build -DCMAKE_PREFIX_PATH=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+  - cmake --build cmake-build
 
