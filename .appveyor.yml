@@ -3,8 +3,8 @@
 # Building the "juce6" branch
 
 branches:
-  except:
-    - master
+  only:
+    - juce6
       
 image: Visual Studio 2019
 
