@@ -1,12 +1,12 @@
 # Testing appveyor
 
-image: Visual Studio 2019
-
 # Building the "juce6" branch
 -
   branches:
     only:
       - juce6
+      
+  image: Visual Studio 2019
 
 # Build and install JUCE6 from GitHub
 
