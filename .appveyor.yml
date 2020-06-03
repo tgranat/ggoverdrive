@@ -1,0 +1,17 @@
+# Testing appveyor
+
+branches:
+  only:
+    - juce6
+
+image: Visual Studio 2019
+
+# Build and install JUCE6 from GitHub
+
+install:
+  - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git JUCE
+  - cd %APPVEYOR_BUILD_FOLDER%/JUCE
+  - cmake -B cmake-build-^Cstall -DCMAKE_INSTALL_PREFIX=C:/juce-6-preview
+  - cmake --build cmake-build-install --target install
+
+build: off
