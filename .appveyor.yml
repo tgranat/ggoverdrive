@@ -1,13 +1,13 @@
 # Testing appveyor
 
-# Building the "juce6" branch
+# Building the "juce6" branch. Requires JUCE 6 since we use cmake.
 
 branches:
   only:
     - juce6
       
 image: 
-  #- Visual Studio 2019
+  - Visual Studio 2019
   - Ubuntu
   - macOS
 
