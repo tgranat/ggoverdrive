@@ -88,7 +88,7 @@ void GgOverdriveProcessor::setCurrentProgram (int index)
 
 const String GgOverdriveProcessor::getProgramName (int index)
 {
-    return {};
+    return "Not used";
 }
 
 void GgOverdriveProcessor::changeProgramName (int index, const String& newName)
