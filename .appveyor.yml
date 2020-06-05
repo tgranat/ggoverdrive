@@ -61,8 +61,6 @@ for:
     
   artifacts:
     - path: cmake-build\Source\GgOverdrive_artefacts\Debug\VST3\Systech Overdrive Simulator.vst3
-    - name: Systech Overdrive Simulator
-    - type: zip
     
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
