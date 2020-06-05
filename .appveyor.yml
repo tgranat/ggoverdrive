@@ -8,8 +8,8 @@ branches:
       
 image: 
   - Visual Studio 2019
-  #- Ubuntu
-  #- macOS
+  - Ubuntu
+  - macOS
 
 for:
 -
