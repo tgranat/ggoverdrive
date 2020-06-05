@@ -68,8 +68,7 @@ build_script:
   - cmake --build cmake-build
    
  artifacts:
-   - path: cmake-build\Source\GgOverdrive_artefacts\Debug\VST3\Systech Overdrive Simulator.vst3
-   - name: Systech Overdrive Simulator
-   - type: zip
+   - path: cmake-build\Source\GgOverdrive_artefacts\Debug\VST3\Systech Overdrive Simulator.vst3\Contents\x86_64-win\Systech Overdrive Simulator.vst3
+
  
 
