@@ -1,5 +1,12 @@
 set (BaseTargetName ${PROJECT_NAME})
 
+# Set VST3_COPY_DIR to directory if you want result to be copied
+set (Copy_Plugin "FALSE")
+if ( VST3_COPY_DIR )
+  set(Copy_Plugin "TRUE")
+  message("VST3_COPY_DIR=${VST3_COPY_DIR}")
+endif()
+
 juce_add_plugin("${BaseTargetName}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
         # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
@@ -10,8 +17,8 @@ juce_add_plugin("${BaseTargetName}"
         NEEDS_MIDI_OUTPUT FALSE
         IS_MIDI_EFFECT FALSE
         EDITOR_WANTS_KEYBOARD_FOCUS FALSE
-        COPY_PLUGIN_AFTER_BUILD FALSE              # Set to TRUE if built runtime should be copied to VST3_COPY_DIR
-        VST3_COPY_DIR C:/VST3_development_plugins  # Change this location if you want. Or remove.
+        COPY_PLUGIN_AFTER_BUILD "${Copy_Plugin}"   # Set to TRUE if built runtime should be copied to VST3_COPY_DIR
+        VST3_COPY_DIR "${VST3_COPY_DIR}"
         PLUGIN_MANUFACTURER_CODE GgFx
         PLUGIN_CODE GgOd
         FORMATS AU VST3 Standalone
