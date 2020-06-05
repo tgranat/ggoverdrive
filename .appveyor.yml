@@ -8,8 +8,8 @@ branches:
       
 image: 
   - Visual Studio 2019
-  - Ubuntu
-  - macOS
+  #- Ubuntu
+  #- macOS
 
 for:
 -
@@ -57,7 +57,12 @@ for:
     - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
     - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
-    - cmake --build cmake-build-install --target install    
+    - cmake --build cmake-build-install --target install
+    
+  artifacts:
+    - path: cmake-build\Source\GgOverdrive_artefacts\Debug\VST3\Systech Overdrive Simulator.vst3
+    - name: Systech Overdrive Simulator
+    - type: zip
     
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
