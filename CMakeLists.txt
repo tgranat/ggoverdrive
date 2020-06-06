@@ -5,6 +5,14 @@ project(GgOverdrive VERSION 1.1.0)
 #  1)   cmake -B cmake-build
 #  2)   cmake --build cmake-build
 #
+# To enable copying av VST3 after build:
+#
+# cmake -B cmake-build -DVST3_COPY_DIR=/path/to/copy/targetdir
+#
+# To point out where JUCE is installed (if a specific JUCE installation is used)  
+#
+# cmake -B cmake-build -DCMAKE_PREFIX_PATH=/path/to/JUCE/install
+# 
 # How to build Release on Windows (Debug is default)
 #  cmake --build cmake-build --config Release
 #
@@ -15,8 +23,6 @@ project(GgOverdrive VERSION 1.1.0)
 # cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=/path/to/JUCE/install
 # Run the installation
 # cmake --build cmake-build-install --target install
-#
-#
 #
 # Build JUCE stuff on Linux (Ubuntu):
 # sudo apt install build-essential libssl-dev  
@@ -46,10 +52,10 @@ project(GgOverdrive VERSION 1.1.0)
 
 
 # Use FIND_PACKAGE if JUCE is installed globally
-# Set global JUCE location:
-#  cmake -B cmake-build -DCMAKE_PREFIX_PATH=/path/to/JUCE/install
+
 find_package(JUCE CONFIG REQUIRED)
 
 # Use add_subdirectory(JUCE) if JUCE is available in the source tree
 # add_subdirectory(JUCE)
+
 add_subdirectory(Source)
