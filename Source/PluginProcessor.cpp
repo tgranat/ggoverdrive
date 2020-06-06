@@ -177,12 +177,16 @@ bool GgOverdriveProcessor::isBusesLayoutSupported (const BusesLayout& layouts) c
     ignoreUnused (layouts);
     return true;
   #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
+    // Only support mono or stereo, that is max 2 channels.
+    // Replaces the test from the JUCE Projucer template, since it broke
+	// the VST3_SDK validator "Bus Activation" test
+	if (layouts.getMainOutputChannelSet().size() > 2)
+		return false;
+	/*
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
-
+        return false;  // this breaks the VST3_SDK validator "Bus Activation" test!
+    */
     // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
