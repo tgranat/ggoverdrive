@@ -1,5 +1,7 @@
 # ggoverdrive
 
+TODO: Update to use released JUCE 6 and then merge with master
+
 Just for fun, I'm trying to simulate the Systech Overdrive pedal from the 70's.
 
 This is an quite rare and odd overdrive with a variable wah-like bandpass filter before an 
