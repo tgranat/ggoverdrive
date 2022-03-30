@@ -29,10 +29,10 @@ for:
     - sh: sudo apt-get -y install libasound2-dev
     - sh: sudo apt-get -y install freeglut3-dev
     - sh: sudo apt-get -y install libxcomposite-dev
-    # Build and install JUCE6 from GitHub
-    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    # Build and install JUCE from GitHub
+    - git clone --branch master -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
-    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6
     - cmake --build cmake-build-install --target install
     
 -    
@@ -44,7 +44,7 @@ for:
      # Build and install JUCE6 from GitHub
     - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
-    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6
     - cmake --build cmake-build-install --target install
     
 -    
