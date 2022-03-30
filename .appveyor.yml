@@ -42,7 +42,7 @@ for:
       
   install:
      # Build and install JUCE6 from GitHub
-    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - git clone --branch master -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd $APPVEYOR_BUILD_FOLDER/tmp/JUCE
     - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/tmp/juce-6
     - cmake --build cmake-build-install --target install
@@ -54,17 +54,17 @@ for:
       
   install:
     # Build and install JUCE6 from GitHub
-    - git clone --branch juce6 -- https://github.com/juce-framework/JUCE.git tmp/JUCE
+    - git clone --branch master -- https://github.com/juce-framework/JUCE.git tmp/JUCE
     - cd %APPVEYOR_BUILD_FOLDER%/tmp/JUCE
-    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
+    - cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6
     - cmake --build cmake-build-install --target install
         
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - sh: cd $APPVEYOR_BUILD_FOLDER
   - git branch
-  - cmd: cmake -B cmake-build -DCMAKE_PREFIX_PATH=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6-preview
-  - sh: cmake -B cmake-build -DCMAKE_PREFIX_PATH=$APPVEYOR_BUILD_FOLDER/tmp/juce-6-preview
+  - cmd: cmake -B cmake-build -DCMAKE_PREFIX_PATH=%APPVEYOR_BUILD_FOLDER%/tmp/juce-6
+  - sh: cmake -B cmake-build -DCMAKE_PREFIX_PATH=$APPVEYOR_BUILD_FOLDER/tmp/juce-6
   - cmake --build cmake-build
 
 
