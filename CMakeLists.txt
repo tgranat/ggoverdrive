@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(GgOverdrive VERSION 1.1.0)
 
+#
+# https://forum.juce.com/t/native-built-in-cmake-support-in-juce/38700
+#
 # Example:
 #  1)   cmake -B cmake-build
 #  2)   cmake --build cmake-build
