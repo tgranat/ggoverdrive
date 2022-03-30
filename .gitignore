@@ -1,9 +1,6 @@
 # VS
 out/
 .vs/
-# JUCE
 Builds/
 cmake-build/
 JuceLibraryCode/
-.vs/
-cmake-build/
