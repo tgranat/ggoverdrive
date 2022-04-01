@@ -8,6 +8,10 @@ project(GgOverdrive VERSION 1.1.0)
 #  1)   cmake -B cmake-build
 #  2)   cmake --build cmake-build
 #
+# Example in my environment
+#   cmake -B cmake-build -DCMAKE_PREFIX_PATH=C:/juce-6.1.6 -DVST3_COPY_DIR=C:/VST3_development_plugins
+#   cmake --build cmake-build
+#
 # To enable copying av VST3 after build:
 #
 # cmake -B cmake-build -DVST3_COPY_DIR=/path/to/copy/targetdir
